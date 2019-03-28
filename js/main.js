@@ -59,4 +59,50 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   //startTime();
 
+
+
+
+
+
+
+
+
+
+
+
+
+  var doc = document.documentElement;
+  var fsFlag = false;
+  function openFullscreen() {
+    fsFlag = true;
+    if (doc.requestFullscreen) {
+      doc.requestFullscreen();
+    } else if (doc.mozRequestFullScreen) { /* Firefox */
+      doc.mozRequestFullScreen();
+    } else if (doc.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+      doc.webkitRequestFullscreen();
+    } else if (doc.msRequestFullscreen) { /* IE/Edge */
+      doc.msRequestFullscreen();
+    }
+  }
+  function closeFullscreen() {
+    fsFlag = false;
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  }
+
+  doc.ondblclick = function (event) {
+    if (fsFlag) {
+      closeFullscreen();
+    } else {
+      openFullscreen();
+    }
+  }
 });
