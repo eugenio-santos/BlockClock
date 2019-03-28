@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
+  var nS = new NoSleep();
+  nS.enable();
 
   var clock = document.getElementById('clock');
 
@@ -20,6 +22,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   window.onresize();
 
+  console.log(moment().format());
+
+
+
   function checkTime(i) {
     if (i < 10) {
       i = "0" + i;
@@ -34,14 +40,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (i < 99) {
       i = '0' + i;
     }
-
     return i;
-
   }
 
   function startTime() {
     var today = new Date();
-
     var m = today.getMinutes();
     var s = today.getSeconds();
     var mm = today.getMilliseconds();
@@ -49,10 +52,8 @@ document.addEventListener('DOMContentLoaded', function () {
     s = checkTime(s);
     mm = checkMilli(mm);
 
-    document.getElementById('clock').innerHTML = s;
+    document.getElementById('clock').innerHTML = m + ":" + s;
     //document.getElementById('clock').innerHTML = s + ":" + mm;
-
-
     t = setTimeout(function () {
       startTime()
     }, 10);
