@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   var nS = new NoSleep();
   var audio = new Audio('beep-09.mp3');
+  audio.volume = 0.1;
 
 
   document.addEventListener('click', function enableNoSleep() {
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var vw = window.innerWidth;
     clock.style.fontSize = vw / 2 + "px";
     recFillFont(clock);
+
     function recFillFont(el) {
       var fs = clock.style.fontSize.substring(0, clock.style.fontSize.length - 2);
       if (el.clientWidth > vw) {
@@ -28,8 +30,18 @@ document.addEventListener('DOMContentLoaded', function () {
   window.onresize();
 
   var blocks = [];
-  blocks.push({ t: moment({ seconds: 3 }), c: 'red' });
-  blocks.push({ t: moment({ seconds: 2 }), c: 'blue' });
+  blocks.push({
+    t: moment({
+      seconds: 3
+    }),
+    c: 'red'
+  });
+  blocks.push({
+    t: moment({
+      seconds: 2
+    }),
+    c: 'blue'
+  });
 
 
 
@@ -42,7 +54,16 @@ document.addEventListener('DOMContentLoaded', function () {
     currentT.t = currentT.t.subtract(timeStep, 'ms');
     document.getElementById('clock').innerHTML = currentT.t.format('ss:S');
     if (currentT.t.seconds() === 0 && currentT.t.milliseconds() === 0) {
-      audio.play();
+
+      var playPromise = audio.play();
+
+      if (playPromise !== undefined) {
+        playPromise.then(function () {}).catch(function (error) {
+          console.log(error);
+          audio.play();
+        });
+      }
+
       await sleep(1000);
       if (blocks.length !== 0) {
         currentT = blocks.shift();
@@ -72,18 +93,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var doc = document.documentElement;
   var fsFlag = false;
+
   function openFullscreen() {
     fsFlag = true;
     if (doc.requestFullscreen) {
       doc.requestFullscreen();
-    } else if (doc.mozRequestFullScreen) { /* Firefox */
+    } else if (doc.mozRequestFullScreen) {
+      /* Firefox */
       doc.mozRequestFullScreen();
-    } else if (doc.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+    } else if (doc.webkitRequestFullscreen) {
+      /* Chrome, Safari & Opera */
       doc.webkitRequestFullscreen();
-    } else if (doc.msRequestFullscreen) { /* IE/Edge */
+    } else if (doc.msRequestFullscreen) {
+      /* IE/Edge */
       doc.msRequestFullscreen();
     }
   }
+
   function closeFullscreen() {
     fsFlag = false;
     if (document.exitFullscreen) {
