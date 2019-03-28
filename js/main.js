@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
   var nS = new NoSleep();
-  nS.enable();
+
+  document.addEventListener('click', function enableNoSleep() {
+    document.removeEventListener('click', enableNoSleep, false);
+    nS.enable();
+  }, false);
 
   var clock = document.getElementById('clock');
 
