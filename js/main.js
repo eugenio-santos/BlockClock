@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
   var nS = new NoSleep();
   var audio = new Audio('beep-09.mp3');
-  audio.play();
+
 
   document.addEventListener('click', function enableNoSleep() {
     document.removeEventListener('click', enableNoSleep, false);
     nS.enable();
+    clock.innerHTML = 'sleep';
   }, false);
 
   var clock = document.getElementById('clock');
@@ -43,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
     currentT.t = currentT.t.subtract(timeStep, 'ms');
     document.getElementById('clock').innerHTML = currentT.t.format('ss:S');
     if (currentT.t.seconds() === 0 && currentT.t.milliseconds() === 0) {
+      audio.play();
       if (blocks.length !== 0) {
         currentT = blocks.shift();
         clock.style.color = currentT.c;
@@ -55,6 +57,6 @@ document.addEventListener('DOMContentLoaded', function () {
       startTime()
     }, timeStep);
   }
-  startTime();
+  //startTime();
 
 });
