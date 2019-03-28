@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   window.onresize = function () {
     var vw = window.innerWidth;
-    clock.innerHTML = "00:00";
     clock.style.fontSize = vw / 2 + "px";
     recFillFont(clock);
     function recFillFont(el) {
@@ -50,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
     s = checkTime(s);
     mm = checkMilli(mm);
 
-    document.getElementById('clock').innerHTML = m + ":" + s;
+    document.getElementById('clock').innerHTML = s;
     //document.getElementById('clock').innerHTML = s + ":" + mm;
 
 
