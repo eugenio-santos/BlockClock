@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   var nS = new NoSleep();
+  var audio = new Audio('beep-09.mp3');
+  audio.play();
 
   document.addEventListener('click', function enableNoSleep() {
     document.removeEventListener('click', enableNoSleep, false);
@@ -25,17 +27,29 @@ document.addEventListener('DOMContentLoaded', function () {
   };
   window.onresize();
 
-  var d = moment({ seconds: 30, minutes: 2 });
-  var timeStep = 10;
+  var blocks = [];
+  blocks.push({ t: moment({ seconds: 3 }), c: 'red' });
+  blocks.push({ t: moment({ seconds: 2 }), c: 'blue' });
 
-  console.log(d.format('mm:ss:S'));
 
+  console.log(blocks);
 
+  //var d = moment.duration(10, 'ms');
+
+  var timeStep = 100;
+  var currentT = blocks.shift();
+  clock.style.color = currentT.c;
   function startTime() {
-
-    d = d.subtract(timeStep, 'ms');
-    document.getElementById('clock').innerHTML = d.format('mm:ss');
-    //console.log(d.format('mm:ss:S'));
+    currentT.t = currentT.t.subtract(timeStep, 'ms');
+    document.getElementById('clock').innerHTML = currentT.t.format('ss:S');
+    if (currentT.t.seconds() === 0 && currentT.t.milliseconds() === 0) {
+      if (blocks.length !== 0) {
+        currentT = blocks.shift();
+        clock.style.color = currentT.c;
+      } else {
+        return;
+      }
+    }
 
     t = setTimeout(function () {
       startTime()
