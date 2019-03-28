@@ -23,44 +23,23 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   };
-
   window.onresize();
 
-  console.log(moment().format());
+  var d = moment({ seconds: 30, minutes: 2 });
+  var timeStep = 10;
 
+  console.log(d.format('mm:ss:S'));
 
-
-  function checkTime(i) {
-    if (i < 10) {
-      i = "0" + i;
-    }
-    return i;
-  }
-
-  function checkMilli(i) {
-    if (i < 10) {
-      i = '0' + i;
-    }
-    if (i < 99) {
-      i = '0' + i;
-    }
-    return i;
-  }
 
   function startTime() {
-    var today = new Date();
-    var m = today.getMinutes();
-    var s = today.getSeconds();
-    var mm = today.getMilliseconds();
-    m = checkTime(m);
-    s = checkTime(s);
-    mm = checkMilli(mm);
 
-    document.getElementById('clock').innerHTML = m + ":" + s;
-    //document.getElementById('clock').innerHTML = s + ":" + mm;
+    d = d.subtract(timeStep, 'ms');
+    document.getElementById('clock').innerHTML = d.format('mm:ss');
+    //console.log(d.format('mm:ss:S'));
+
     t = setTimeout(function () {
       startTime()
-    }, 10);
+    }, timeStep);
   }
   startTime();
 
