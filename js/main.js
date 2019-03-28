@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
   document.addEventListener('click', function enableNoSleep() {
     document.removeEventListener('click', enableNoSleep, false);
     nS.enable();
-    clock.innerHTML = 'sleep';
   }, false);
 
   var clock = document.getElementById('clock');
@@ -33,18 +32,18 @@ document.addEventListener('DOMContentLoaded', function () {
   blocks.push({ t: moment({ seconds: 2 }), c: 'blue' });
 
 
-  console.log(blocks);
 
   //var d = moment.duration(10, 'ms');
 
   var timeStep = 100;
   var currentT = blocks.shift();
   clock.style.color = currentT.c;
-  function startTime() {
+  async function startTime() {
     currentT.t = currentT.t.subtract(timeStep, 'ms');
     document.getElementById('clock').innerHTML = currentT.t.format('ss:S');
     if (currentT.t.seconds() === 0 && currentT.t.milliseconds() === 0) {
       audio.play();
+      await sleep(1000);
       if (blocks.length !== 0) {
         currentT = blocks.shift();
         clock.style.color = currentT.c;
@@ -57,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
       startTime()
     }, timeStep);
   }
-  //startTime();
+  startTime();
 
 
 
@@ -97,12 +96,15 @@ document.addEventListener('DOMContentLoaded', function () {
       document.msExitFullscreen();
     }
   }
-
   doc.ondblclick = function (event) {
     if (fsFlag) {
       closeFullscreen();
     } else {
       openFullscreen();
     }
+  }
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 });
