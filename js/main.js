@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   var nS = new NoSleep();
-  var audio = new Audio('beep-09.mp3');
+  var finalBeep = new Audio('beep-09.mp3');
+  var aboutToEndBeep = new Audio('beep-02.mp3');
   var clock = document.getElementById('clock');
   var timeStep = 10;
   var blocks = [];
@@ -10,7 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var currentTimeOut;
 
 
-  audio.volume = 0.1;
+  finalBeep.volume = 0;
+  aboutToEndBeep.volume = 0;
 
   document.addEventListener('click', function enableNoSleep() {
     document.removeEventListener('click', enableNoSleep, false);
@@ -101,9 +103,12 @@ document.addEventListener('DOMContentLoaded', function () {
       if (child.classList.contains('block')) {
         mTimers.removeChild(child);
       } else if (child.classList.contains('repeat-div')) {
-        mTimers.innerHTML = child.innerHTML;
+        while (child.childNodes.length !== 0) {
+          mTimers.appendChild(child.childNodes[0]);
+        }
         mTimers.removeChild(mTimers.lastElementChild);
         mTimers.removeChild(mTimers.lastElementChild);
+        child.remove();
       }
       timerEl.pop();
     }
@@ -141,6 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
       clock.style.color = currentT.c;
       clearTimeout(currentTimeOut);
       startTime();
+      document.getElementById('menu').style.display = 'none';
     }
   }
 
@@ -165,7 +171,6 @@ document.addEventListener('DOMContentLoaded', function () {
     return color;
   }
 
-
   async function startTime() {
     currentT.t = currentT.t.subtract(timeStep, 'ms');
 
@@ -175,8 +180,11 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('clock').innerHTML = currentT.t.format('mm:ss');
     }
 
+    if (currentT.t.seconds() < 4 && currentT.t.seconds() > 0 && currentT.t.milliseconds() === 0) {
+      aboutToEndBeep.play();
+    }
     if (currentT.t.minutes() === 0 && currentT.t.seconds() === 0 && currentT.t.milliseconds() === 0) {
-      audio.play();
+      finalBeep.play();
       await sleep(1000);
       if (blocks.length !== 0) {
         currentT = blocks.shift();
@@ -191,18 +199,33 @@ document.addEventListener('DOMContentLoaded', function () {
     }, timeStep);
   }
 
-
-  var tin = document.getElementById('tin');
-
-  function blockOnKeyUp(tin) {
-    if (tin.value.length === 2 && event.keyCode !== 8) {
-      tin.value = tin.value + ":"
-    }
-    if (tin.value.length === 3 && !tin.value.endsWith(':')) {
-      tin.value = tin.value.replace(/.$/, ':')
+  var volIcoClass = document.getElementById('vol-ico').classList;
+  document.getElementById('volume').onclick = function () {
+    if (volIcoClass.contains('fa-volume-off')) {
+      volIcoClass.remove('fa-volume-off');
+      volIcoClass.add('fa-volume-down');
+      finalBeep.volume = 0.5;
+      aboutToEndBeep.volume = 0.5;
+    } else if (volIcoClass.contains('fa-volume-down')) {
+      volIcoClass.remove('fa-volume-down');
+      volIcoClass.add('fa-volume-up');
+      finalBeep.volume = 1;
+      aboutToEndBeep.volume = 1;
+    } else if (volIcoClass.contains('fa-volume-up')) {
+      volIcoClass.remove('fa-volume-up');
+      volIcoClass.add('fa-volume-off');
+      finalBeep.volume = 0;
+      aboutToEndBeep.volume = 0;
     }
   }
 
+  document.getElementById('open-menu').onclick = function (ev) {
+    document.getElementById('menu').style.display = 'flex';
+  }
+
+  document.getElementById('close-menu').onclick = function () {
+    document.getElementById('menu').style.display = 'none';
+  }
 
   var doc = document.documentElement;
   var fsFlag = false;
@@ -235,12 +258,12 @@ document.addEventListener('DOMContentLoaded', function () {
       document.msExitFullscreen();
     }
   }
-  document.getElementById('overlay').ondblclick = function (event) {
-    //if (fsFlag) {
-    //  closeFullscreen();
-    //} else {
-    //  openFullscreen();
-    //}
+  document.getElementById('toggle-full-screen').onclick = function (event) {
+    if (fsFlag) {
+      closeFullscreen();
+    } else {
+      openFullscreen();
+    }
   }
 
   function sleep(ms) {
