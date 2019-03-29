@@ -1,17 +1,18 @@
 document.addEventListener('DOMContentLoaded', function () {
   var nS = new NoSleep();
   var audio = new Audio('beep-09.mp3');
-  audio.volume = 0.1;
+  var clock = document.getElementById('clock');
+  var timeStep = 10;
 
+  audio.volume = 0.1;
 
   document.addEventListener('click', function enableNoSleep() {
     document.removeEventListener('click', enableNoSleep, false);
     nS.enable();
   }, false);
+  window.onresize = resizeText;
 
-  var clock = document.getElementById('clock');
-
-  window.onresize = function () {
+  function resizeText() {
     var vw = window.innerWidth;
     clock.style.fontSize = vw / 2 + "px";
     recFillFont(clock);
@@ -27,12 +28,13 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   };
-  window.onresize();
+  resizeText();
+
 
   var blocks = [];
   blocks.push({
     t: moment({
-      seconds: 3
+      seconds: 3, minutes: 1
     }),
     c: 'red'
   });
@@ -44,26 +46,20 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
 
-
-  //var d = moment.duration(10, 'ms');
-
-  var timeStep = 100;
   var currentT = blocks.shift();
   clock.style.color = currentT.c;
+
   async function startTime() {
     currentT.t = currentT.t.subtract(timeStep, 'ms');
-    document.getElementById('clock').innerHTML = currentT.t.format('ss:S');
-    if (currentT.t.seconds() === 0 && currentT.t.milliseconds() === 0) {
 
-      var playPromise = audio.play();
+    if (currentT.t.minutes() === 0) {
+      document.getElementById('clock').innerHTML = currentT.t.format('ss:SS');
+    } else {
+      document.getElementById('clock').innerHTML = currentT.t.format('mm:ss');
+    }
 
-      if (playPromise !== undefined) {
-        playPromise.then(function () {}).catch(function (error) {
-          console.log(error);
-          audio.play();
-        });
-      }
-
+    if (currentT.t.minutes() === 0 && currentT.t.seconds() === 0 && currentT.t.milliseconds() === 0) {
+      audio.play();
       await sleep(1000);
       if (blocks.length !== 0) {
         currentT = blocks.shift();
