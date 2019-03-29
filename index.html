@@ -2,23 +2,28 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Block Clock</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
-    <link href="https://fonts.googleapis.com/css?family=Anonymous+Pro" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" media="screen" href="styles.css">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Block Clock</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+  <link href="https://fonts.googleapis.com/css?family=Anonymous+Pro" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" media="screen" href="styles.css">
 </head>
 
 <body>
-    <div id="overlay">
-        <div id="menu">
-            <input type="text" minlength="5" maxlength="5" size="2" inputmode="numeric">
-            <input type="number">
-        </div>
+  <div id="overlay">
+    <div id="menu">
+      <div id="m-timers"></div>
+      <div id="m-btns">
+        <button id="add-block" class="btn">Add Block</button>
+        <button id="add-repeat" class="btn">Repeat</button>
+        <button id="del" class="btn btn-error">Delete</button>
+        <button id="start" class="btn btn-success">Start</button>
+      </div>
     </div>
-    <div id="clock">00:00</div>
+  </div>
+  <div id="clock">00:00</div>
 </body>
 
 

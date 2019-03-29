@@ -3,6 +3,12 @@ document.addEventListener('DOMContentLoaded', function () {
   var audio = new Audio('beep-09.mp3');
   var clock = document.getElementById('clock');
   var timeStep = 10;
+  var blocks = [];
+  var timerEl = [];
+  var mTimers = document.getElementById('m-timers');
+  var currentT;
+  var currentTimeOut;
+
 
   audio.volume = 0.1;
 
@@ -11,6 +17,12 @@ document.addEventListener('DOMContentLoaded', function () {
     nS.enable();
   }, false);
   window.onresize = resizeText;
+
+  document.getElementById('add-block').onclick = addBlock;
+  document.getElementById('add-repeat').onclick = addRepeat;
+  document.getElementById('del').onclick = deleteBlock;
+  document.getElementById('start').onclick = startTimer;
+
 
   function resizeText() {
     var vw = window.innerWidth;
@@ -30,24 +42,129 @@ document.addEventListener('DOMContentLoaded', function () {
   };
   resizeText();
 
+  function addBlock() {
+    var el = document.createElement('input');
+    el.classList.add('block');
 
-  var blocks = [];
-  blocks.push({
-    t: moment({
-      seconds: 3, minutes: 1
-    }),
-    c: 'red'
-  });
-  blocks.push({
-    t: moment({
-      seconds: 2
-    }),
-    c: 'blue'
-  });
+    el.onkeyup = function (ev) {
+      if (ev.target.value.length === 2 && event.keyCode !== 8) {
+        ev.target.value = ev.target.value + ":"
+      }
+      if (ev.target.value.length === 3 && !ev.target.value.endsWith(':')) {
+        ev.target.value = ev.target.value.replace(/.$/, ':')
+      }
+    };
 
+    el.setAttribute('type', 'text');
+    el.setAttribute('minlength', '5');
+    el.setAttribute('maxlength', '5');
+    el.setAttribute('size', '3');
+    el.setAttribute('inputmode', 'numeric');
+    el.setAttribute('placeholder', 'min:sec');
+    mTimers.appendChild(el);
+    el.focus();
 
-  var currentT = blocks.shift();
-  clock.style.color = currentT.c;
+    timerEl.push(el);
+  }
+
+  function addRepeat() {
+    if (mTimers.lastElementChild !== null) {
+
+      var label = document.createElement('label');
+      var el = document.createElement('input');
+      var repeatDiv = document.createElement('div');
+
+      repeatDiv.classList.add('repeat-div');
+      mTimers.appendChild(repeatDiv);
+
+      while (mTimers.childNodes.length !== 1) {
+        repeatDiv.appendChild(mTimers.childNodes[0]);
+      }
+      label.innerHTML = 'X:';
+      el.classList.add('repeat');
+      el.setAttribute('type', 'number');
+      el.setAttribute('min', '1');
+      el.setAttribute('max', '100');
+
+      repeatDiv.appendChild(label);
+      repeatDiv.appendChild(el);
+
+      el.focus();
+
+      timerEl.push(el);
+    }
+  }
+
+  function deleteBlock() {
+    var child = mTimers.lastElementChild;
+    if (child !== null) {
+      if (child.classList.contains('block')) {
+        mTimers.removeChild(child);
+      } else if (child.classList.contains('repeat-div')) {
+        mTimers.innerHTML = child.innerHTML;
+        mTimers.removeChild(mTimers.lastElementChild);
+        mTimers.removeChild(mTimers.lastElementChild);
+      }
+      timerEl.pop();
+    }
+  }
+
+  function startTimer() {
+    blocks = [];
+    timerEl.forEach(el => {
+      if (el.classList.contains('block')) {
+        var times = getBlockTimes(el.value);
+        blocks.push({
+          t: moment({
+            seconds: times[1], minutes: times[0]
+          }),
+          c: getRandomColor()
+        });
+      } else if (el.classList.contains('repeat')) {
+        if (el.value) {
+          var i = parseInt(el.value);
+          var og = blocks.slice();
+          while (i > 1) {
+            og.forEach(b => {
+              var newB = { t: b.t.clone(), c: b.c };
+              blocks.push(newB);
+            });
+
+            i--;
+          }
+        }
+      }
+    });
+
+    if (blocks.length !== 0) {
+      currentT = blocks.shift();
+      clock.style.color = currentT.c;
+      clearTimeout(currentTimeOut);
+      startTime();
+    }
+  }
+
+  function getBlockTimes(val) {
+    var t = [];
+    if (val === '') {
+      t[0] = 0;
+      t[1] = 0;
+    } else {
+      t[0] = parseInt(val.slice(0, 2));
+      t[1] = parseInt(val.slice(3, 5));
+    }
+    return t;
+  }
+
+  function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
 
   async function startTime() {
     currentT.t = currentT.t.subtract(timeStep, 'ms');
@@ -69,22 +186,22 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    t = setTimeout(function () {
+    currentTimeOut = setTimeout(function () {
       startTime()
     }, timeStep);
   }
-  startTime();
 
 
+  var tin = document.getElementById('tin');
 
-
-
-
-
-
-
-
-
+  function blockOnKeyUp(tin) {
+    if (tin.value.length === 2 && event.keyCode !== 8) {
+      tin.value = tin.value + ":"
+    }
+    if (tin.value.length === 3 && !tin.value.endsWith(':')) {
+      tin.value = tin.value.replace(/.$/, ':')
+    }
+  }
 
 
   var doc = document.documentElement;
@@ -118,12 +235,12 @@ document.addEventListener('DOMContentLoaded', function () {
       document.msExitFullscreen();
     }
   }
-  doc.ondblclick = function (event) {
-    if (fsFlag) {
-      closeFullscreen();
-    } else {
-      openFullscreen();
-    }
+  document.getElementById('overlay').ondblclick = function (event) {
+    //if (fsFlag) {
+    //  closeFullscreen();
+    //} else {
+    //  openFullscreen();
+    //}
   }
 
   function sleep(ms) {
