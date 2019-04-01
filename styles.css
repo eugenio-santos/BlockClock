@@ -70,9 +70,9 @@ body {
   position: absolute;
   left: 50%;
   bottom: 0;
-  -moz-transform: translateX(-100%);
-  -webkit-transform: translateX(-100%);
-  transform: translateX(-100%);
+  -moz-transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
   z-index: 1;
   font-family: 'Anonymous Pro', monospace;
   font-size: 22px;
