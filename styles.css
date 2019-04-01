@@ -51,9 +51,9 @@ body {
 }
 
 #options {
-  width: 55%;
+  width: 100%;
   margin: auto;
-  margin-top: 15px;
+  margin-top: 0.75%;
   padding: 10px 20px 10px 20px;
   overflow: auto;
   position: absolute;
