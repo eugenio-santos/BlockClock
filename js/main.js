@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var mTimers = document.getElementById('m-timers');
   var currentT;
   var currentTimeOut;
+  var stopwatchTimeOut;
+  var realTime = document.getElementById('real-time');
+  var stopwatchMoment;
 
 
   finalBeep.volume = 0;
@@ -25,6 +28,30 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('del').onclick = deleteBlock;
   document.getElementById('start').onclick = startTimer;
 
+
+  (function Clock() {
+
+    realTime.innerHTML = moment().format('hh:mm');
+
+
+    currentTimeOut = setTimeout(function () {
+      Clock()
+    }, 500);
+  })();
+
+  function stopWatch() {
+    stopwatchMoment = stopwatchMoment.add(timeStep, 'ms');
+
+    if (stopwatchMoment.minutes() === 0) {
+      document.getElementById('clock').innerHTML = stopwatchMoment.format('ss:SS');
+    } else {
+      document.getElementById('clock').innerHTML = stopwatchMoment.format('mm:ss');
+    }
+
+    stopwatchTimeOut = setTimeout(function () {
+      stopWatch()
+    }, timeStep);
+  }
 
   function resizeText() {
     var vw = window.innerWidth;
@@ -60,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
     el.setAttribute('type', 'text');
     el.setAttribute('minlength', '5');
     el.setAttribute('maxlength', '5');
-    el.setAttribute('size', '3');
+    //el.setAttribute('size', '3');
     el.setAttribute('inputmode', 'numeric');
     el.setAttribute('placeholder', 'min:sec');
     mTimers.appendChild(el);
@@ -86,9 +113,11 @@ document.addEventListener('DOMContentLoaded', function () {
       el.classList.add('repeat');
       el.setAttribute('type', 'number');
       el.setAttribute('min', '1');
-      el.setAttribute('max', '100');
+      //el.setAttribute('max', '100');
+      el.setAttribute('placeholder', 'repetitions');
 
-      repeatDiv.appendChild(label);
+
+      //repeatDiv.appendChild(label);
       repeatDiv.appendChild(el);
 
       el.focus();
@@ -116,6 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function startTimer() {
     blocks = [];
+
     timerEl.forEach(el => {
       if (el.classList.contains('block')) {
         var times = getBlockTimes(el.value);
@@ -142,11 +172,21 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     if (blocks.length !== 0) {
+      blocks.unshift({
+        t: moment({
+          seconds: 5, minutes: 0
+        }),
+        c: getRandomColor()
+      });
       currentT = blocks.shift();
       clock.style.color = currentT.c;
       clearTimeout(currentTimeOut);
       startTime();
       document.getElementById('menu').style.display = 'none';
+
+      document.getElementById('play-pause').classList.add('pause');
+      document.getElementById('play-pause').classList.remove('play');
+      document.getElementById('play-pause').innerHTML = '<i class="fas fa-pause"></i>';
     }
   }
 
@@ -171,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return color;
   }
 
-  async function startTime() {
+  function startTime() {
     currentT.t = currentT.t.subtract(timeStep, 'ms');
 
     if (currentT.t.minutes() === 0) {
@@ -180,12 +220,11 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('clock').innerHTML = currentT.t.format('mm:ss');
     }
 
-    if (currentT.t.seconds() < 4 && currentT.t.seconds() > 0 && currentT.t.milliseconds() === 0) {
+    if (currentT.minutes() === 0 && currentT.t.seconds() < 4 && currentT.t.seconds() > 0 && currentT.t.milliseconds() === 0) {
       aboutToEndBeep.play();
     }
     if (currentT.t.minutes() === 0 && currentT.t.seconds() === 0 && currentT.t.milliseconds() === 0) {
       finalBeep.play();
-      await sleep(1000);
       if (blocks.length !== 0) {
         currentT = blocks.shift();
         clock.style.color = currentT.c;
@@ -227,6 +266,49 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('menu').style.display = 'none';
   }
 
+  document.getElementById('play-pause').onclick = function (ev) {
+    var classes = this.classList;
+    var sWatch = document.getElementById('stopwatch');
+    if (classes.contains('pause')) {
+      clearTimeout(currentTimeOut);
+      classes.remove('pause');
+      classes.add('play');
+      this.innerHTML = '<i class="fas fa-play"></i>';
+    } else if (classes.contains('play') && blocks.length !== 0) {
+      if (sWatch.classList.contains('stopwatch-active')) {
+        sWatch.classList.remove('stopwatch-active');
+        clearTimeout(stopwatchTimeOut);
+      }
+      startTime();
+      classes.add('pause');
+      classes.remove('play');
+      this.innerHTML = '<i class="fas fa-pause"></i>';
+    }
+  }
+
+  document.getElementById('close-menu').onclick = function () {
+    document.getElementById('menu').style.display = 'none';
+  }
+
+  document.getElementById('stopwatch').onclick = function (ev) {
+    var classes = this.classList;
+    var playPause = document.getElementById('play-pause');
+    if (classes.contains('stopwatch-active')) {
+      classes.remove('stopwatch-active');
+      clearTimeout(stopwatchTimeOut);
+    } else {
+      if (playPause.classList.contains('pause')) {
+        clearTimeout(currentTimeOut);
+        playPause.classList.remove('pause');
+        playPause.classList.add('play');
+        playPause.innerHTML = '<i class="fas fa-play"></i>';
+      }
+      classes.add('stopwatch-active');
+      stopwatchMoment = moment({ hours: 0, minuts: 0, seconds: 0 });
+      stopWatch();
+    }
+  }
+
   var doc = document.documentElement;
   var fsFlag = false;
 
@@ -266,7 +348,5 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+
 });

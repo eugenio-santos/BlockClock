@@ -35,8 +35,7 @@ body {
 #menu {
   width: 55%;
   margin-top: 15px;
-  background: white;
-  padding: 10px 20px 10px 20px;
+  background: rgb(243, 242, 242);
   display: none;
   overflow: auto;
   position: absolute;
@@ -45,6 +44,10 @@ body {
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%);
   z-index: 4;
+  border-style: solid;
+  border-radius: 5px;
+  border-width: 1px;
+
 }
 
 #options {
@@ -60,6 +63,20 @@ body {
   transform: translateX(-50%);
   z-index: 3;
   text-align: center;
+}
+
+#real-time {
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  -moz-transform: translateX(-100%);
+  -webkit-transform: translateX(-100%);
+  transform: translateX(-100%);
+  z-index: 1;
+  font-family: 'Anonymous Pro', monospace;
+  font-size: 22px;
+
 }
 
 @media only screen and (max-width: 600px) {
@@ -86,15 +103,16 @@ body {
 
 .btn {
   margin: 5px 0 5px 0;
-  color: white;
-  padding: 10px;
+  color: rgb(47, 175, 218);
+  padding: 5px;
   border: solid;
   border-radius: 5px;
-  border-width: 0px;
+  border-width: 1px;
   box-sizing: border-box;
   text-align: center;
   width: 100%;
-  background-color: rgb(47, 175, 218);
+  border-color: rgb(47, 175, 218);
+  background: none;
 }
 
 .btn-opt {
@@ -108,6 +126,12 @@ body {
   min-width: 50px;
   min-height: 50px;
   background: none;
+  outline: none;
+}
+
+.stopwatch-active {
+  color: white;
+  background: black;
 }
 
 .btn:hover {
@@ -115,7 +139,8 @@ body {
 }
 
 .btn-success {
-  background-color: #00aa00;
+  color: #00aa00;
+  border-color: #00aa00;
 }
 
 .btn-success:hover {
@@ -123,7 +148,8 @@ body {
 }
 
 .btn-error {
-  background-color: #ff4343;
+  color: #ff4343;
+  border-color: #ff4343;
 }
 
 .btn-error:hover {
@@ -131,24 +157,27 @@ body {
 }
 
 .block {
-  border-width: 3px;
   border-style: solid;
   display: block;
   margin-top: 1px;
+  width: 100%;
 }
 
 .repeat {
-  display: inline-block;
-  width: 2em;
   border-color: green;
   border-style: solid;
   margin-top: 1px;
+  margin-bottom: 2px;
+  width: 100%;
 }
 
 .repeat-div {
   border-width: 1px;
   border-style: solid;
+  border-top: none;
+  border-left: none;
   display: inline-block;
   padding-right: 5px;
   vertical-align: middle;
+  width: 75%;
 }
