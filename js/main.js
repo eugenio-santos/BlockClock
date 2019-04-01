@@ -87,7 +87,6 @@ document.addEventListener('DOMContentLoaded', function () {
     el.setAttribute('type', 'text');
     el.setAttribute('minlength', '5');
     el.setAttribute('maxlength', '5');
-    //el.setAttribute('size', '3');
     el.setAttribute('inputmode', 'numeric');
     el.setAttribute('placeholder', 'min:sec');
     mTimers.appendChild(el);
@@ -99,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function () {
   function addRepeat() {
     if (mTimers.lastElementChild !== null) {
 
-      var label = document.createElement('label');
       var el = document.createElement('input');
       var repeatDiv = document.createElement('div');
 
@@ -109,15 +107,12 @@ document.addEventListener('DOMContentLoaded', function () {
       while (mTimers.childNodes.length !== 1) {
         repeatDiv.appendChild(mTimers.childNodes[0]);
       }
-      label.innerHTML = 'X:';
       el.classList.add('repeat');
       el.setAttribute('type', 'number');
       el.setAttribute('min', '1');
-      //el.setAttribute('max', '100');
       el.setAttribute('placeholder', 'repetitions');
 
 
-      //repeatDiv.appendChild(label);
       repeatDiv.appendChild(el);
 
       el.focus();
@@ -135,7 +130,6 @@ document.addEventListener('DOMContentLoaded', function () {
         while (child.childNodes.length !== 0) {
           mTimers.appendChild(child.childNodes[0]);
         }
-        mTimers.removeChild(mTimers.lastElementChild);
         mTimers.removeChild(mTimers.lastElementChild);
         child.remove();
       }
@@ -187,6 +181,8 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('play-pause').classList.add('pause');
       document.getElementById('play-pause').classList.remove('play');
       document.getElementById('play-pause').innerHTML = '<i class="fas fa-pause"></i>';
+      document.getElementById('stopwatch').classList.remove('stopwatch-active');
+      clearTimeout(stopwatchTimeOut);
     }
   }
 
@@ -220,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('clock').innerHTML = currentT.t.format('mm:ss');
     }
 
-    if (currentT.minutes() === 0 && currentT.t.seconds() < 4 && currentT.t.seconds() > 0 && currentT.t.milliseconds() === 0) {
+    if (currentT.t.minutes() === 0 && currentT.t.seconds() < 4 && currentT.t.seconds() > 0 && currentT.t.milliseconds() === 0) {
       aboutToEndBeep.play();
     }
     if (currentT.t.minutes() === 0 && currentT.t.seconds() === 0 && currentT.t.milliseconds() === 0) {
