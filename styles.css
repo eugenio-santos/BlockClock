@@ -166,12 +166,11 @@ body {
 }
 
 .block {
+  border-color: rgb(47, 175, 218);
   border-style: solid;
   display: block;
   margin-top: 1px;
   width: 100%;
-  border-color: rgb(47, 175, 218);
-
 }
 
 .repeat {
@@ -180,7 +179,6 @@ body {
   margin-top: 1px;
   margin-bottom: 2px;
   width: 100%;
-
 }
 
 .repeat-div {
