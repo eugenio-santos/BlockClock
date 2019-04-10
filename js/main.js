@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   (function Clock() {
 
-    realTime.innerHTML = moment().format('hh:mm:ss:SSS');
+    realTime.innerHTML = moment().format('hh:mm:ss');
 
 
     setTimeout(function () {
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
     prevStepTime = Date.now();
 
     if (stopwatchMoment.minutes() === 0) {
-      document.getElementById('clock').innerHTML = stopwatchMoment.format('ss:SS');
+      document.getElementById('clock').innerHTML = stopwatchMoment.format('ss.SS');
     } else {
       document.getElementById('clock').innerHTML = stopwatchMoment.format('mm:ss');
     }
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
     prevStepTime = Date.now();
 
     if (currentT.t.minutes() === 0) {
-      document.getElementById('clock').innerHTML = currentT.t.format('ss:SS');
+      document.getElementById('clock').innerHTML = currentT.t.format('ss.SS');
     } else {
       document.getElementById('clock').innerHTML = currentT.t.format('mm:ss');
     }
