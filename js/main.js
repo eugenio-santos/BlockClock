@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var stopwatchTimeOut;
   var realTime = document.getElementById('real-time');
   var stopwatchMoment;
+  var prevStepTime;
 
 
   finalBeep.volume = 0;
@@ -31,16 +32,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
   (function Clock() {
 
-    realTime.innerHTML = moment().format('hh:mm');
+    realTime.innerHTML = moment().format('hh:mm:ss:SSS');
 
 
-    currentTimeOut = setTimeout(function () {
+    setTimeout(function () {
       Clock()
-    }, 500);
+    }, 50);
   })();
 
   function stopWatch() {
-    stopwatchMoment = stopwatchMoment.add(timeStep, 'ms');
+
+    stopwatchMoment = stopwatchMoment.add(Date.now() - prevStepTime, 'ms');
+    prevStepTime = Date.now();
 
     if (stopwatchMoment.minutes() === 0) {
       document.getElementById('clock').innerHTML = stopwatchMoment.format('ss:SS');
@@ -166,15 +169,16 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     if (blocks.length !== 0) {
-      blocks.unshift({
+
+      currentT = {
         t: moment({
           seconds: 5, minutes: 0
         }),
         c: getRandomColor()
-      });
-      currentT = blocks.shift();
+      }
       clock.style.color = currentT.c;
       clearTimeout(currentTimeOut);
+      prevStepTime = Date.now();
       startTime();
       document.getElementById('menu').style.display = 'none';
 
@@ -208,7 +212,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function startTime() {
-    currentT.t = currentT.t.subtract(timeStep, 'ms');
+    currentT.t = currentT.t.subtract(Date.now() - prevStepTime, 'ms');
+    prevStepTime = Date.now();
 
     if (currentT.t.minutes() === 0) {
       document.getElementById('clock').innerHTML = currentT.t.format('ss:SS');
@@ -216,10 +221,10 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('clock').innerHTML = currentT.t.format('mm:ss');
     }
 
-    if (currentT.t.minutes() === 0 && currentT.t.seconds() < 4 && currentT.t.seconds() > 0 && currentT.t.milliseconds() === 0) {
+    if (currentT.t.minutes() === 0 && currentT.t.seconds() < 4 && currentT.t.seconds() > 0 && currentT.t.milliseconds() <= 10) {
       aboutToEndBeep.play();
     }
-    if (currentT.t.minutes() === 0 && currentT.t.seconds() === 0 && currentT.t.milliseconds() === 0) {
+    if (currentT.t.minutes() === 0 && currentT.t.seconds() === 0 && currentT.t.milliseconds() <= 10) {
       finalBeep.play();
       if (blocks.length !== 0) {
         currentT = blocks.shift();
@@ -275,6 +280,7 @@ document.addEventListener('DOMContentLoaded', function () {
         sWatch.classList.remove('stopwatch-active');
         clearTimeout(stopwatchTimeOut);
       }
+      prevStepTime = Date.now();
       startTime();
       classes.add('pause');
       classes.remove('play');
@@ -301,6 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       classes.add('stopwatch-active');
       stopwatchMoment = moment({ hours: 0, minuts: 0, seconds: 0 });
+      prevStepTime = Date.now();
       stopWatch();
     }
   }
